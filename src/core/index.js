@@ -2,6 +2,7 @@ const IPFS = require('ipfs')
 const path = require('path')
 const Room = require('ipfs-pubsub-room')
 const database = require('../../models/database')
+const cryptography = require('../util/cryptography')
 
 
 async function init(args){
@@ -69,7 +70,7 @@ async function addUser(id , args){
 async function updateInfo(updates , args , ipfs="self") {
     if(ipfs=="self")
         ipfs = (await args.node.id()).id
-    args.db.User.findOne({where : {ipfs:ipfs}}).then((result) => {
+    args.db.User.findOne({where : {ipfs:ipfs}}).then(async (result) => {
         let prevFileHash = result.dataValues.filehash
 
         if(updates.hasOwnProperty('filehash')){
@@ -78,7 +79,7 @@ async function updateInfo(updates , args , ipfs="self") {
             return
         }
 
-        args.node.get(prevFileHash).then(([file]) => {
+        args.node.get(prevFileHash).then(async([file]) => {
             data = JSON.parse(file.content.toString())
             
             if(updates.hasOwnProperty('bio')){
@@ -115,7 +116,9 @@ async function getUsers(){
     return users
 }
 
-
+module.exports = {
+    init: init
+}
 
 
 
