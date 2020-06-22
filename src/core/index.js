@@ -152,6 +152,5 @@ module.exports = {
     init: init
 }
 
-init()
 
 
