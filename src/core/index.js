@@ -1,7 +1,7 @@
 const IPFS = require('ipfs')
 const path = require('path')
 const Room = require('ipfs-pubsub-room')
-const database = require('./models/database')
+const database = require('../../models/database')
 
 
 async function init(args){
