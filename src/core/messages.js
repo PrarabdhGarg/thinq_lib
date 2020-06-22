@@ -1,6 +1,17 @@
 const cryptography = require('../util/cryptography')
 const gdf = require('../util/gdf')
 
+const MessageAction = {
+    REQUEST: 1,
+    UPDATE: 2,
+    DELETE: 3,
+    C_CREATE:4,
+    SP_ACK:5,
+    C_ACK:6,
+    SP_C_CREATE:7,
+    RATE_UPDATE:8
+}
+
 function broadcastMessageToRoom(message, args) {
     message['recipient'] = 'All'
     args.room.broadcast(gdf.gdf_encode(message))
@@ -34,5 +45,6 @@ async function sendMessageToUser(msg, user, args) {
 module.exports = {
     broadcastMessageToRoom: broadcastMessageToRoom,
     sendMessageToUser: sendMessageToUser,
-    broadcastMessageToAddressBook: broadcastMessageToAddressBook
+    broadcastMessageToAddressBook: broadcastMessageToAddressBook,
+    MessageAction: MessageAction
 }
