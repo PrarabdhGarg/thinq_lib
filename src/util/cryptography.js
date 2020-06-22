@@ -49,8 +49,13 @@ async function getDecryptedText(encrypted, secret) {
     return decrypted
 }
 
+function getPublicKey() {
+    return fs.readFileSync('./.public.txt')
+}
+
 module.exports = {
     generateKeys: generateKeys,
     getEncryptedText: getEncryptedText,
-    getDecryptedText: getDecryptedText
+    getDecryptedText: getDecryptedText,
+    getPublicKey: getPublicKey
 }
