@@ -19,6 +19,8 @@
   "dependencies": {
     "ipfs": "^0.40.0",
     "ipfs-pubsub-room": "^1.4.1",
+    "md5": "^2.2.1",
+    "openpgp": "^4.10.4",
     "sequelize": "^5.21.13",
     "sqlite3": "^4.2.0"
   }
