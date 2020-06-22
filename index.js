@@ -4,12 +4,12 @@ const Room = require('ipfs-pubsub-room')
 const database = require('./models/database')
 
 
-async function init(args){
+async function init(args = {}){
     let repo_path = args.hasOwnProperty('path') ? args.path : path.join(__dirname , 'ipfs/thinq/')
     let room_name = args.hasOwnProperty('rname') ? args.rname : 'room1'
     
     const node = await IPFS.create({
-        repo: path.join(__dirname , repo_path),
+        repo:  'ipfs/thinq/',
         init: true,
         EXPERIMENTAL: {
             pubsub: true
@@ -29,8 +29,8 @@ async function init(args){
 
     let db = database.db_init(args)
 
-    for(model of db)
-        await model.sync({force: false})
+    for(model of Object.keys(db))
+        await db[model].sync({force: false})
 
     return {
         db : db ,
@@ -69,7 +69,7 @@ async function addUser(id , args){
 async function updateInfo(updates , args , ipfs="self") {
     if(ipfs=="self")
         ipfs = (await args.node.id()).id
-    args.db.User.findOne({where : {ipfs:ipfs}}).then((result) => {
+    args.db.User.findOne({where : {ipfs:ipfs}}).then(async (result) => {
         let prevFileHash = result.dataValues.filehash
 
         if(updates.hasOwnProperty('filehash')){
@@ -78,7 +78,7 @@ async function updateInfo(updates , args , ipfs="self") {
             return
         }
 
-        args.node.get(prevFileHash).then(([file]) => {
+        args.node.get(prevFileHash).then(async ([file]) => {
             data = JSON.parse(file.content.toString())
             
             if(updates.hasOwnProperty('bio')){
@@ -91,10 +91,10 @@ async function updateInfo(updates , args , ipfs="self") {
             for(key of Object.keys(updates))
                 new_info[key] = updates[key]
 
-            global.node.add(JSON.stringify(new_info)).then(([stat]) => {
+            args.node.add(JSON.stringify(new_info)).then(([stat]) => {
                 new_info.filehash = stat.hash.toString()
 
-                global.User.update({new_info}, {where: {ipfs: ipfs}}).then((result1) => {
+                args.db.User.update({new_info}, {where: {ipfs: ipfs}}).then((result1) => {
                     console.log('Database updated sucessfully')
                     // message.broadcastMessageToAddressBook({
                     //     sender: ipfs,
@@ -114,8 +114,6 @@ async function getUsers(){
         
     return users
 }
-
-
 
 
 
