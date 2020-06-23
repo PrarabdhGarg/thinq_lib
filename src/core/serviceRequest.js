@@ -20,7 +20,9 @@ async function sentRequests(args){
 
 // Returns a list of all the pending requests sorted by priority
 async function pendingRequests(args){
-    args.db.ServiceRequest.findAll({where: {status: "pending"},order:[['priority']]}).then((requests)=>{
+    args.db.ServiceRequest.findAll({where: {status: "pending"},order:[['priority']],
+    limit: limit,
+    offset: offset}).then((requests)=>{
         let promises = []
         for(request of requests)
             promises.push(args.db.User.findOne({where: {ipfs:request.dataValues.sender}}))
