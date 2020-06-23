@@ -46,5 +46,5 @@ module.exports = {
     broadcastMessageToRoom: broadcastMessageToRoom,
     sendMessageToUser: sendMessageToUser,
     broadcastMessageToAddressBook: broadcastMessageToAddressBook,
-    MessageAction: MessageAction
+    messageAction: MessageAction
 }
