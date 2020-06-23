@@ -29,5 +29,7 @@ async function db_init(args){
     return db
 }
 
-module.exports = db_init
+module.exports = {
+    db_init : db_init
+}
 

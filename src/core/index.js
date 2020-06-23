@@ -5,12 +5,12 @@ const database = require('../../models/database')
 const cryptography = require('../util/cryptography')
 
 
-async function init(args){
+async function init(args = {}){
     let repo_path = args.hasOwnProperty('path') ? args.path : path.join(__dirname , 'ipfs/thinq/')
     let room_name = args.hasOwnProperty('rname') ? args.rname : 'room1'
     
     const node = await IPFS.create({
-        repo: path.join(__dirname , repo_path),
+        repo:  repo_path,
         init: true,
         EXPERIMENTAL: {
             pubsub: true
@@ -30,8 +30,8 @@ async function init(args){
 
     let db = database.db_init(args)
 
-    for(model of db)
-        await model.sync({force: false})
+    for(model of Object.keys(db))
+        await db[model].sync({force: false})
 
     return {
         db : db ,
@@ -79,7 +79,7 @@ async function updateInfo(updates , args , ipfs="self") {
             return
         }
 
-        args.node.get(prevFileHash).then(async([file]) => {
+        args.node.get(prevFileHash).then(async ([file]) => {
             data = JSON.parse(file.content.toString())
             
             if(updates.hasOwnProperty('bio')){
@@ -92,10 +92,10 @@ async function updateInfo(updates , args , ipfs="self") {
             for(key of Object.keys(updates))
                 new_info[key] = updates[key]
 
-            global.node.add(JSON.stringify(new_info)).then(([stat]) => {
+            args.node.add(JSON.stringify(new_info)).then(([stat]) => {
                 new_info.filehash = stat.hash.toString()
 
-                global.User.update({new_info}, {where: {ipfs: ipfs}}).then((result1) => {
+                args.db.User.update({new_info}, {where: {ipfs: ipfs}}).then((result1) => {
                     console.log('Database updated sucessfully')
                 })
             })
@@ -114,7 +114,6 @@ async function getUsers(){
 module.exports = {
     init: init
 }
-
 
 
 
