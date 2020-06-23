@@ -173,4 +173,230 @@ async function spcreatecRequests(sender_name,args){
 })
 }
 
+// The other party acknowledges the request and rates the party which initiated the process
+async function sp_ack_request(sender_name,userRating,documentPath,args){
+    args.db.User.findOne({where: {name:sender_name}}).then((sender)=>{
+        let prevrating
+        let flag
+        let rating
+        let transactions
+        let promises = []
+            args.node.files.read(documentPath
+                , (err, res) => {
+                    if(err) {
+                        rating=userRating
+                        transactions=1
+                        args.node.files.write(documentPath, Buffer.from(sender.dataValues.ipfs+ '|'+ rating+ '|' +transactions), {
+                            create: true,
+                            parents: true
+                            }, (err, res) => {
+                             if(err) {
+                                console.log("--------------------------Error in inserting file " + err.message)
+                            } 
+                            else {
+                            args.node.files.stat(documentPath, (err, respon) => {
+                            if(err) {
+                                console.log("Error in inserting rating" + err.message)
+                            }
+                            console.log('Stat Result = ' + JSON.stringify(respon))
+                            hash = respon.hash
+                            console.log('File Hash = ' + hash)
+                            })
+                            }
+                            })
+                            args.db.ClosedRequest.update({status:"sp_ack",display:"1"},{where: {sender:sender.dataValues.ipfs , status: "created"}}).then((result)=>{    
+                                args.node.id().then((info)=>{
+                                    message.sendMessageToUser({
+                                        sender: info.id,
+                                        recipient: sender.dataValues.ipfs,
+                                        action:message.messageAction.SP_ACK,
+                                        rating:rating.toString(),
+                                        transact:transactions.toString()
+                                    } , sender.dataValues.ipfs).then((result)=>{
+                                        console.log("Request acknowledged")
+                                    })
+                                })
+                            })
+                   } 
+                   else {
+                    promises.push(res)
+                    Promise.all(promises).then((results)=>{
+                        console.log("Reults are",results[0].toString())
+                        prevrating=results[0].toString()
+                        if(prevrating !== undefined)
+                        {   
+                            console.log("Entering if condition")
+                            console.log("previous rating is:",parseFloat((prevrating.split("|")[1])))
+                            console.log("Rating provided is:",parseInt(userRating))
+                            rating=(parseFloat((prevrating.split("|")[1])*parseInt(prevrating.split("|")[2])+parseInt(userRating)))/(parseInt(prevrating.split("|")[2])+1)
+                            transactions=parseInt(prevrating.split("|")[2])+1
+                            console.log("New rating is:",rating)
+                            console.log("transaction number is",transactions)
+                        }
+                        else
+                        {   
+                            console.log("Entering else condition")
+                            rating=userRating
+                            transactions=1
+                        }
+                        args.node.files.write(documentPath, Buffer.from(prevrating.split("|")[0]+ '|'+rating + '|' + transactions), {
+                            create: true,
+                            parents: true
+                            }, (err, res) => {
+                             if(err) {
+                                console.log("Error in inserting file " + err.message)
+                            } 
+                            else {
+                            args.node.files.stat(documentPath, (err, respon) => {
+                            if(err) {
+                                console.log("Error in inserting rating" + err.message)
+                            }
+                            console.log('Stat Result = ' + JSON.stringify(respon))
+                            hash = respon.hash
+                            args.db.User.update({ratinghash:hash},{where: {ipfs:sender.dataValues.ipfs}}).then((result)=>{
+                                console.log("The updated hash spack is:",hash)
+                            })
+                            console.log('File Hash = ' + hash)
+                            })
+                            }
+                            })
+                            args.db.ClosedRequest.update({status:"sp_ack",display:"1"},{where: {sender:sender.dataValues.ipfs , status: "created"}}).then((result)=>{    
+                                args.node.id().then((info)=>{
+                                    message.sendMessageToUser({
+                                        sender: info.id,
+                                        recipient: sender.dataValues.ipfs,
+                                        action: message.messageAction.SP_ACK,
+                                        rating:rating.toString(),
+                                        transact:transactions.toString()
+                                    } , sender.dataValues.ipfs).then((result)=>{
+                                        console.log("Request acknowledged")
+                                    })
+                                })
+                            })
+                })
+                   }
+                   })
+})
+}
 
+// The party which initiated the process completes it and rated the other party
+async function c_ack_request(sender_name,userRating,documentPath,args){
+    args.db.User.findOne({where: {name:sender_name}}).then((sender)=>{
+        let prevrating
+        let flag
+        let rating
+        let transactions
+        let promises = []
+            args.node.files.read(documentPath
+                , (err, res) => {
+                    if(err) {
+                        rating=userRating
+                        transactions=1
+                        args.node.files.write(documentPath, Buffer.from(sender.dataValues.ipfs+ '|' +rating + '|' + transactions), {
+                            create: true,
+                            parents: true
+                            }, (err, res) => {
+                             if(err) {
+                                console.log("--------------------------Error in inserting file " + err.message)
+                            } 
+                            else {
+                            args.node.files.stat(documentPath, (err, respon) => {
+                            if(err) {
+                                console.log("Error in inserting rating" + err.message)
+                            }
+                            console.log('Stat Result = ' + JSON.stringify(respon))
+                            hash = respon.hash
+                            console.log('File Hash = ' + hash)
+                            })
+                            }
+                            })
+                            args.db.ClosedRequest.update({status:"c_ack"},{where: {sender:sender.dataValues.ipfs , status: "sp_ack"}}).then((result)=>{    
+                                args.node.id().then((info)=>{
+                                    message.sendMessageToUser({
+                                        sender: info.id,
+                                        recipient: sender.dataValues.ipfs,
+                                        action: message.messageAction.C_ACK,
+                                        rating:rating.toString(),
+                                        transact:transactions.toString()
+                                    } , sender.dataValues.ipfs).then((result)=>{
+                                        console.log("Resolution process complete")
+                                    })
+                                })
+                            })
+                   } 
+                   else {
+                    promises.push(res)
+                    Promise.all(promises).then((results)=>{
+                        console.log("Results are",results[0].toString())
+                        prevrating=results[0].toString()
+                        if(prevrating !== undefined)
+                        {   
+                            console.log("Entering if condition")
+                            console.log("previous rating is:",parseFloat((prevrating.split("|")[0])))
+                            console.log("Rating provided is:",parseInt(userRating))
+                            rating=(parseFloat((prevrating.split("|")[1])*parseInt(prevrating.split("|")[2])+parseInt(userRating)))/(parseInt(prevrating.split("|")[2])+1)
+                            transactions=parseInt(prevrating.split("|")[2])+1
+                            console.log("New rating is:",rating)
+                            console.log("transaction number is",transactions)
+                        }
+                        else
+                        {   
+                            console.log("Entering else condition")
+                            rating=userRating
+                            transactions=1
+                        }
+                        args.node.files.write(documentPath, Buffer.from(prevrating.split("|")[0]+ '|' +rating + '|' + transactions), {
+                            create: true,
+                            parents: true
+                            }, (err, res) => {
+                             if(err) {
+                                console.log("Error in inserting file " + err.message)
+                            } 
+                            else {
+                            args.node.files.stat(documentPath, (err, respon) => {
+                            if(err) {
+                                console.log("Error in inserting rating" + err.message)
+                            }
+                            console.log('Stat Result = ' + JSON.stringify(respon))
+                            hash = respon.hash
+                            args.db.User.update({ratinghash:hash},{where: {ipfs:sender.dataValues.ipfs}}).then((result)=>{
+                                console.log("The updated hash cack is:",hash)
+                            })
+                            console.log('File Hash = ' + hash)
+                            })
+                            }
+                            })
+                            args.db.ClosedRequest.update({status:"c_ack"},{where: {sender:sender.dataValues.ipfs , status: "sp_ack"}}).then((result)=>{    
+                                args.node.id().then((info)=>{
+                                    message.sendMessageToUser({
+                                        sender: info.id,
+                                        recipient: sender.dataValues.ipfs,
+                                        action: message.messageAction.C_ACK,
+                                        rating:rating.toString(),
+                                        transact:transactions.toString()
+                                    } , sender.dataValues.ipfs).then((result)=>{
+                                        console.log("Resolution process complete")
+                                    })
+                                })
+                            })
+                })
+                   }
+                   })
+})
+}
+
+
+module.exports={
+    sentRequests:sentRequests,
+    pendingRequests:pendingRequests,
+    createdcRequests:createdcRequests,
+    createdspRequests:createdspRequests,
+    spackRequests:spackRequests,
+    cackRequests:cackRequests,
+    addRequests:addRequests,
+    deleteRequests:deleteRequests,
+    createcRequests:createcRequests,
+    spcreatecRequests:spcreatecRequests,
+    sp_ack_request:sp_ack_request,
+    c_ack_request:c_ack_request
+}
