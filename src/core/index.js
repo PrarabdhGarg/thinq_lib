@@ -28,7 +28,7 @@ async function init(args = {}){
     console.log('IPFS node running with id ', id.id)
     const room = Room(node, room_name)
 
-    let db = database.db_init(args)
+    let db = await database.db_init(args)
 
     for(model of Object.keys(db))
         await db[model].sync({force: false})
