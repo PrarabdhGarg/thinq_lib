@@ -3,11 +3,13 @@ const path = require('path')
 const Room = require('ipfs-pubsub-room')
 const database = require('../../models/database')
 const cryptography = require('../util/cryptography')
+const messages = require('./messages')
 
 
 async function init(args = {}){
     let repo_path = args.hasOwnProperty('path') ? args.path : path.join(__dirname , 'ipfs/thinq/')
     let room_name = args.hasOwnProperty('rname') ? args.rname : 'room1'
+    let callback = args.hasOwnProperty('messageCallback') ? args.messageCallback : () => {}
     
     const node = await IPFS.create({
         repo:  repo_path,
@@ -32,6 +34,14 @@ async function init(args = {}){
 
     for(model of Object.keys(db))
         await db[model].sync({force: false})
+
+    room.on('message', (message) => {
+        messages.onMessageRecived({
+            db: db,
+            node: node,
+            room: room
+        }, message, callback)
+    })
 
     return {
         db : db ,
