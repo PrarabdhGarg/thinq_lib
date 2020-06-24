@@ -104,3 +104,9 @@ dist
 .tern-port
 
 ipfs/
+.private.txt
+.public.txt
+.revoce.txt
+models/database.sqlite3
+src/test.js
+src/core/ipfs/*
