@@ -26,7 +26,7 @@ async function sentRequests(args){
 }
 
 // Returns a list of all the pending requests sorted by priority
-async function pendingRequests(args){
+async function pendingRequests(args, limit, offset){
     args.db.ServiceRequest.findAll({where: {status: RequestStatus.pending},order:[['priority']],
     limit: limit,
     offset: offset}).then((requests)=>{

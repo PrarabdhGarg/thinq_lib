@@ -61,17 +61,25 @@ async function register(init_info , args){
             init_info['bio'] = stats[1][0].hash.toString()
             init_info['rating'] = '2.5'
 
-            args.node.add(JSON.stringify(init_info)).then(([stat])=>{
-                args.db.User.create({name:init_info.name , ipfs:info.id , bio:init_info.bio, publicKey:stats[0][0].hash.toString(), type:init_info.type , rating: '2.5' , filehash:stat.hash.toString()})
+            args.node.add(JSON.stringify(init_info)).then(async ([stat])=>{
+                await args.db.User.create({name:init_info.name , ipfs:info.id , bio:init_info.bio, publicKey:stats[0][0].hash.toString(), type:init_info.type , rating: '2.5' , filehash:stat.hash.toString()})
+                return true
             })
         })
     })
 }
 
-async function addUser(id , args){
+async function addUser(id, name, args){
     args.node.get(id).then(([info])=>{
         let user_info = JSON.parse(info.content.toString())
-        args.db.User.create({type:user_info.type , name:user_info.name , filehash:id , publicKey:user_info.publicKey , ipfs:user_info.ipfs , bio:user_info.bio , rating: user_info.rating})
+        args.db.User.create({type:user_info.type , name:user_info.name , filehash:id , publicKey:user_info.publicKey , ipfs:user_info.ipfs , bio:user_info.bio , rating: user_info.rating}).then((user) => {
+            args.node.get(user_info.bio).then(([bio])=>{
+                user_info['bio'] = bio.content.toString()
+                user_info['ipfs'] = user_info['IPFSHash']
+                user_info['name'] = name
+                return user_info
+            })
+        })
     })
 }
 
@@ -113,7 +121,7 @@ async function updateInfo(updates , args , ipfs="self") {
     })
 }
 
-async function getUsers(){
+async function getUsers(args) {
     let users = await args.db.User.findAll({})
     for(let i=0 ; i<users.length ; i++)
         users[i] = users[i].dataValues
