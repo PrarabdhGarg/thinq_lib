@@ -82,15 +82,15 @@ async function onMessageRecived(args, message, callback) {
                 rating = 0
             }
             console.log('Rating = ' + rating.toString())
-            args.db.PendingRequest.create({sender: message.from , status: "Unused", rating: rating})
+            args.db.ServiceRequest.create({sender: message.from , status:servicerequest.RequestStatus.pending , rating: rating})
         })
     } else if(decoded_msg.action == MessageAction.DELETE) {
-        args.db.PendingRequest.destroy({where : {sender: message.from}})
+        args.db.ServiceRequest.destroy({where : {sender: message.from,status:servicerequest.RequestStatus.pending}})
     } else if(decoded_msg.action == MessageAction.C_CREATE) {
-        args.db.PendingRequest.destroy({where : {sender: message.from}})
-        args.db.ClosedRequest.create({sender:message.from,status:servicerequest.RequestStatus.created,display:"2"})
+        args.db.ServiceRequest.destroy({where : {sender: message.from,status:servicerequest.RequestStatus.pending}})
+        args.db.ServiceRequest.create({sender:message.from,status:servicerequest.RequestStatus.created,display:"2"})
     } else if(decoded_msg.action == MessageAction.SP_ACK) {
-        args.db.ClosedRequest.update({status:servicerequest.RequestStatus.sp_ack,display:"2"},{where: {sender:message.from , status: servicerequest.RequestStatus.created}})
+        args.db.ServiceRequest.update({status:servicerequest.RequestStatus.sp_ack,display:"2"},{where: {sender:message.from , status: servicerequest.RequestStatus.created}})
         args.node.id().then((info)=>{
             console.log("server SP_ack infoid is written here:",info.id.toString())
             documentPath='/ratings/' + info.id.toString() + '.txt'
@@ -123,7 +123,7 @@ async function onMessageRecived(args, message, callback) {
             })
         })     
     } else if(decoded_msg.action == MessageAction.C_ACK) {
-        args.db.ClosedRequest.update({status:servicerequest.RequestStatus.c_ack},{where: {sender:message.from , status: servicerequest.RequestStatus.sp_ack}})
+        args.db.ServiceRequest.update({status:servicerequest.RequestStatus.c_ack},{where: {sender:message.from , status: servicerequest.RequestStatus.sp_ack}})
         aargs.node.id().then((info)=>{
             console.log("server C_ack infoid is:",info.id.toString())
             documentPath='/ratings/' + info.id.toString() + '.txt'
@@ -156,8 +156,8 @@ async function onMessageRecived(args, message, callback) {
         })
     })   
     } else if(decoded_msg.action == MessageAction.SP_C_CREATE) {
-        args.db.SentRequest.destroy({where : {sender: message.from}})
-        args.db.ClosedRequest.create({sender:message.from,status:servicerequest.RequestStatus.created,display:"1"})
+        args.db.ServiceRequest.destroy({where : {sender: message.from,status:servicerequest.RequestStatus.sent}})
+        args.db.ServiceRequest.create({sender:message.from,status:servicerequest.RequestStatus.created,display:"1"})
     } else if(decoded_msg.action == MessageAction.RATE_UPDATE) {
         documentPath='/ratings/' + message.from.toString() + '.txt'
         console.log("------------------------server rateupdate id is:",message.from.toString())
