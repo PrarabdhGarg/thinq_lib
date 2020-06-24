@@ -3,11 +3,13 @@ const path = require('path')
 const Room = require('ipfs-pubsub-room')
 const database = require('../../models/database')
 const cryptography = require('../util/cryptography')
+const messages = require('./messages')
 
 
 async function init(args = {}){
     let repo_path = args.hasOwnProperty('path') ? args.path : path.join(__dirname , 'ipfs/thinq/')
     let room_name = args.hasOwnProperty('rname') ? args.rname : 'room1'
+    let callback = args.hasOwnProperty('messageCallback') ? args.messageCallback : () => {}
     
     const node = await IPFS.create({
         repo:  repo_path,
@@ -28,10 +30,18 @@ async function init(args = {}){
     console.log('IPFS node running with id ', id.id)
     const room = Room(node, room_name)
 
-    let db = database.db_init(args)
+    let db = await database.db_init(args)
 
     for(model of Object.keys(db))
         await db[model].sync({force: false})
+
+    room.on('message', (message) => {
+        messages.onMessageRecived({
+            db: db,
+            node: node,
+            room: room
+        }, message, callback)
+    })
 
     return {
         db : db ,
@@ -111,43 +121,6 @@ async function getUsers(){
     return users
 }
 
-// Uploads a file parsed using FileReader to ipfs,adds it to filebook and returns the hash of newly uploaded file
-async function uploadfile(file,documentPath,filename,args){
-    args.node.id().then(async (info)=>{  
-        let hash
-        args.node.files.write(documentPath, Buffer.from(file), {
-                create: true,
-                parents: true
-            }, (err, resp) => {
-                if(err) {
-                    console.log("Error in inserting file " + err.message)
-                } else {
-                    args.node.files.stat(documentPath, (err, respon) => {
-                        if(err) {
-                        }
-                        hash = respon.hash
-                        console.log('Hash of uploaded file is = ' + hash)
-                        args.db.FileBook.findOne({ where: { 'ipfs_hash':hash.toString()} }).then(async (token) => {
-                            if(token === null)
-                            {
-                            args.db.FileBook.create({ipfs_hash: hash.toString(),name:filename})
-                            return hash.toString()
-                            }
-                         })
-                        })
-                        
-                    }
-                })
-})
-}
-
-// Returns the filebook of a user
-async function getFilebook(){
-    let files = await args.db.FileBook.findAll({})
-    for(let i=0 ; i<files.length ; i++)
-        files[i] = files[i].dataValues
-    return files
-}
 module.exports = {
     init: init
 }
