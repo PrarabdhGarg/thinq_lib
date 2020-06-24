@@ -62,8 +62,9 @@ async function register(init_info , args){
             init_info['rating'] = '2.5'
 
             args.node.add(JSON.stringify(init_info)).then(async ([stat])=>{
-                await args.db.User.create({name:init_info.name , ipfs:info.id , bio:init_info.bio, publicKey:stats[0][0].hash.toString(), type:init_info.type , rating: '2.5' , filehash:stat.hash.toString()})
-                return true
+                args.db.User.create({name:init_info.name , ipfs:info.id , bio:init_info.bio, publicKey:stats[0][0].hash.toString(), type:init_info.type , rating: '2.5' , filehash:stat.hash.toString()}).then((_) => {
+                    return true
+                })
             })
         })
     })
