@@ -1,7 +1,7 @@
 {
-  "name": "thinq_lib",
-  "version": "1.0.0",
-  "description": "",
+  "name": "@gnowledge/thinq_lib",
+  "version": "0.1.0",
+  "description": "ThinQ-Lib is a framework built over the IPFS network. It provides a way to enable storing files in a distrbuted file system along with encryption to ensure data privacy. It also uses a Graph-based data digest format - GDF to represent data internally.",
   "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -10,7 +10,7 @@
     "type": "git",
     "url": "git+https://github.com/PrarabdhGarg/thinq_lib.git"
   },
-  "author": "",
+  "author": "Himanshu Pandey, Prarabdh Garg, Unmesh Roy",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/PrarabdhGarg/thinq_lib/issues"
