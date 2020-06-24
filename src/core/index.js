@@ -122,7 +122,11 @@ async function getUsers(){
 }
 
 module.exports = {
-    init: init
+    init: init,
+    getUsers: getUsers,
+    updateInfo: updateInfo,
+    addUser: addUser,
+    register: register
 }
 
 
