@@ -35,7 +35,7 @@ async function uploadfile(file,documentPath,filename,args){
 }
 
 // Returns the filebook of a user
-async function getFilebook(){
+async function getFilebook(args){
     let files = await args.db.FileBook.findAll({})
     for(let i=0 ; i<files.length ; i++)
         files[i] = files[i].dataValues
