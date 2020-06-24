@@ -1,5 +1,7 @@
 const cryptography = require('../util/cryptography')
 const gdf = require('../util/gdf')
+const servicerequest=require('./serviceRequest')
+
 
 const MessageAction = {
     REQUEST: 1,
@@ -86,9 +88,9 @@ async function onMessageRecived(args, message, callback) {
         args.db.PendingRequest.destroy({where : {sender: message.from}})
     } else if(decoded_msg.action == MessageAction.C_CREATE) {
         args.db.PendingRequest.destroy({where : {sender: message.from}})
-        args.db.ClosedRequest.create({sender:message.from,status:"created",display:"2"})
+        args.db.ClosedRequest.create({sender:message.from,status:servicerequest.RequestStatus.created,display:"2"})
     } else if(decoded_msg.action == MessageAction.SP_ACK) {
-        args.db.ClosedRequest.update({status:"sp_ack",display:"2"},{where: {sender:message.from , status: "created"}})
+        args.db.ClosedRequest.update({status:servicerequest.RequestStatus.sp_ack,display:"2"},{where: {sender:message.from , status: servicerequest.RequestStatus.created}})
         args.node.id().then((info)=>{
             console.log("server SP_ack infoid is written here:",info.id.toString())
             documentPath='/ratings/' + info.id.toString() + '.txt'
@@ -121,7 +123,7 @@ async function onMessageRecived(args, message, callback) {
             })
         })     
     } else if(decoded_msg.action == MessageAction.C_ACK) {
-        args.db.ClosedRequest.update({status:"c_ack"},{where: {sender:message.from , status: "sp_ack"}})
+        args.db.ClosedRequest.update({status:servicerequest.RequestStatus.c_ack},{where: {sender:message.from , status: servicerequest.RequestStatus.sp_ack}})
         aargs.node.id().then((info)=>{
             console.log("server C_ack infoid is:",info.id.toString())
             documentPath='/ratings/' + info.id.toString() + '.txt'
@@ -155,7 +157,7 @@ async function onMessageRecived(args, message, callback) {
     })   
     } else if(decoded_msg.action == MessageAction.SP_C_CREATE) {
         args.db.SentRequest.destroy({where : {sender: message.from}})
-        args.db.ClosedRequest.create({sender:message.from,status:"created",display:"1"})
+        args.db.ClosedRequest.create({sender:message.from,status:servicerequest.RequestStatus.created,display:"1"})
     } else if(decoded_msg.action == MessageAction.RATE_UPDATE) {
         documentPath='/ratings/' + message.from.toString() + '.txt'
         console.log("------------------------server rateupdate id is:",message.from.toString())
