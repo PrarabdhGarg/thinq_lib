@@ -51,23 +51,19 @@ async function init(args = {}){
 }
 
 async function register(init_info , args){
-    args.node.id().then(async (info)=>{
-        await cryptography.generateKeys()
-        let public_key = cryptography.getPublicKey()
+    info = await args.node.id()
+    await cryptography.generateKeys()
+    let public_key = cryptography.getPublicKey()
 
-        Promise.all([args.node.add(public_key) , args.node.add(init_info.bio)]).then((stats) => {
-            init_info['publicKey'] = stats[0][0].hash.toString()
-            init_info['ipfs'] = info.id.toString()
-            init_info['bio'] = stats[1][0].hash.toString()
-            init_info['rating'] = '2.5'
+    stats = await Promise.all([args.node.add(public_key) , args.node.add(init_info.bio)])
+    init_info['publicKey'] = stats[0][0].hash.toString()
+    init_info['ipfs'] = info.id.toString()
+    init_info['bio'] = stats[1][0].hash.toString()
+    init_info['rating'] = '2.5'
 
-            args.node.add(JSON.stringify(init_info)).then(async ([stat])=>{
-                args.db.User.create({name:init_info.name , ipfs:info.id , bio:init_info.bio, publicKey:stats[0][0].hash.toString(), type:init_info.type , rating: '2.5' , filehash:stat.hash.toString()}).then((_) => {
-                    return true
-                })
-            })
-        })
-    })
+    stat = await args.node.add(JSON.stringify(init_info))
+    user = await args.db.User.create({name:init_info.name , ipfs:info.id , bio:init_info.bio, publicKey:stats[0][0].hash.toString(), type:init_info.type , rating: '2.5' , filehash:stat.hash.toString()})
+    return true
 }
 
 async function addUser(id, name, args){
