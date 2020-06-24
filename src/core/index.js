@@ -136,7 +136,8 @@ module.exports = {
     getUsers: getUsers,
     updateInfo: updateInfo,
     addUser: addUser,
-    register: register
+    register: register,
+    getFileContent: getFileContent
 }
 
 
