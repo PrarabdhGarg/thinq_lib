@@ -126,12 +126,18 @@ async function getUsers(args) {
     return users
 }
 
+async function getFileContent(cid , args) {
+    let [file] = await args.node.get(cid)
+    return file.content.toString()
+}
+
 module.exports = {
     init: init,
     getUsers: getUsers,
     updateInfo: updateInfo,
     addUser: addUser,
-    register: register
+    register: register,
+    getFileContent: getFileContent
 }
 
 
