@@ -1,13 +1,8 @@
 const message = require('./messages')
 
 
-const RequestStatus = {
-    sent:1,
-    pending:2,
-    created:3,
-    sp_ack:4,
-    c_ack:5
-}
+const RequestStatus = message.RequestStatus
+
 // Returns a list of all the sent requests
 async function sentRequests(args){
     let [requests]=await args.db.ServiceRequest.findAll({where: {status: RequestStatus.sent}})
