@@ -107,7 +107,7 @@ async function addRequests(sender_ipfs,args){
                 action: message.messageAction.REQUEST
             }
             console.log(sender_ipfs)
-            let result=await message.sendMessageToUser(msg ,sender_ipfs)
+            result=await message.sendMessageToUser(msg ,sender_ipfs)
                 console.log("Request successfully added")
 
 }
@@ -117,7 +117,7 @@ async function deleteRequests(sender_name,args){
     let sender=await args.db.User.findOne({where: {name:sender_name}})
         let result=await args.db.ServiceRequest.destroy({where: {sender: sender.dataValues.ipfs, status: RequestStatus.sent}})
         let info=await args.node.id()
-            let result=await message.sendMessageToUser({
+            result=await message.sendMessageToUser({
                     sender: info.id,
                     recipient: sender.dataValues.ipfs,
                     action: message.messageAction.DELETE
@@ -130,9 +130,9 @@ async function deleteRequests(sender_name,args){
 async function createcRequests(sender_name,args){
     let sender = await args.db.User.findOne({where: {name:sender_name}})
     let result=await args.db.ServiceRequest.destroy({where: {sender: sender.dataValues.ipfs, status: RequestStatus.sent}})
-    let result=await args.db.ServiceRequest.create({sender:sender.dataValues.ipfs , status: RequestStatus.created,display:"1"}) 
+    result=await args.db.ServiceRequest.create({sender:sender.dataValues.ipfs , status: RequestStatus.created,display:"1"}) 
         let info=await args.node.id()
-            let result=await message.sendMessageToUser({
+            result=await message.sendMessageToUser({
                 sender: info.id,
                 recipient: sender.dataValues.ipfs,
                 action: message.messageAction.C_CREATE
@@ -144,9 +144,9 @@ async function createcRequests(sender_name,args){
 async function spcreatecRequests(sender_name,args){
     let sender=await args.db.User.findOne({where: {name:sender_name}})
     let result=await args.db.ServiceRequest.destroy({where: {sender: sender.dataValues.ipfs, status: RequestStatus.pending}})
-        let result=await args.db.ServiceRequest.create({sender:sender.dataValues.ipfs , status: RequestStatus.created,display:"2"})
+        result=await args.db.ServiceRequest.create({sender:sender.dataValues.ipfs , status: RequestStatus.created,display:"2"})
         let info=await args.node.id()
-            let result=await message.sendMessageToUser({
+            result=await message.sendMessageToUser({
                 sender: info.id,
                 recipient: sender.dataValues.ipfs,
                 action: message.messageAction.SP_C_CREATE
@@ -187,7 +187,7 @@ async function sp_ack_request(sender_name,userRating,documentPath,args){
                             })
                             let result=await args.db.ServiceRequest.update({status:RequestStatus.sp_ack,display:"1"},{where: {sender:sender.dataValues.ipfs , status: RequestStatus.created}})
                                 let info=await args.node.id()
-                                   let result=await message.sendMessageToUser({
+                                   result=await message.sendMessageToUser({
                                         sender: info.id,
                                         recipient: sender.dataValues.ipfs,
                                         action:message.messageAction.SP_ACK,
@@ -238,9 +238,9 @@ async function sp_ack_request(sender_name,userRating,documentPath,args){
                             console.log('File Hash = ' + hash)
                             }
                             })
-                            let result=await args.db.ServiceRequest.update({status:RequestStatus.sp_ack,display:"1"},{where: {sender:sender.dataValues.ipfs , status: RequestStatus.created}})    
+                            result=await args.db.ServiceRequest.update({status:RequestStatus.sp_ack,display:"1"},{where: {sender:sender.dataValues.ipfs , status: RequestStatus.created}})    
                                 let info=await args.node.id()
-                                    let result=await message.sendMessageToUser({
+                                    result=await message.sendMessageToUser({
                                         sender: info.id,
                                         recipient: sender.dataValues.ipfs,
                                         action: message.messageAction.SP_ACK,
@@ -285,7 +285,7 @@ async function c_ack_request(sender_name,userRating,documentPath,args){
                         })
                         let result=await args.db.ServiceRequest.update({status:RequestStatus.c_ack},{where: {sender:sender.dataValues.ipfs , status: RequestStatus.sp_ack}})
                             let info=await args.node.id()
-                               let result=await message.sendMessageToUser({
+                               result=await message.sendMessageToUser({
                                     sender: info.id,
                                     recipient: sender.dataValues.ipfs,
                                     action:message.messageAction.C_ACK,
@@ -336,9 +336,9 @@ async function c_ack_request(sender_name,userRating,documentPath,args){
                         console.log('File Hash = ' + hash)
                         }
                         })
-                        let result=await args.db.ServiceRequest.update({status:RequestStatus.c_ack},{where: {sender:sender.dataValues.ipfs , status: RequestStatus.sp_ack}})    
+                        result=await args.db.ServiceRequest.update({status:RequestStatus.c_ack},{where: {sender:sender.dataValues.ipfs , status: RequestStatus.sp_ack}})    
                             let info=await args.node.id()
-                                let result=await message.sendMessageToUser({
+                                result=await message.sendMessageToUser({
                                     sender: info.id,
                                     recipient: sender.dataValues.ipfs,
                                     action: message.messageAction.C_ACK,
