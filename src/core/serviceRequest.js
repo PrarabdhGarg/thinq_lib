@@ -163,7 +163,7 @@ async function sp_ack_request(sender_name,userRating,documentPath,args){
         let transactions
         let promises = []
             args.node.files.read(documentPath
-                , (err, res) => {
+                , async (err, res) => {
                     if(err) {
                         rating=userRating
                         transactions=1
@@ -185,7 +185,7 @@ async function sp_ack_request(sender_name,userRating,documentPath,args){
                             })
                             }
                             })
-                            args.db.ServiceRequest.update({status:RequestStatus.sp_ack,display:"1"},{where: {sender:sender.dataValues.ipfs , status: RequestStatus.created}}).then((res)=>{
+                            args.db.ServiceRequest.update({status:RequestStatus.sp_ack,display:"1"},{where: {sender:sender.dataValues.ipfs , status: RequestStatus.created}}).then(async (res)=>{
                                 let info=await args.node.id()
                                    let result=await message.sendMessageToUser({
                                         sender: info.id,
@@ -239,7 +239,7 @@ async function sp_ack_request(sender_name,userRating,documentPath,args){
                             console.log('File Hash = ' + hash)
                             }
                             })
-                            args.db.ServiceRequest.update({status:RequestStatus.sp_ack,display:"1"},{where: {sender:sender.dataValues.ipfs , status: RequestStatus.created}}).then((res)=>{    
+                            args.db.ServiceRequest.update({status:RequestStatus.sp_ack,display:"1"},{where: {sender:sender.dataValues.ipfs , status: RequestStatus.created}}).then(async (res)=>{    
                                 let info=await args.node.id()
                                     let result=await message.sendMessageToUser({
                                         sender: info.id,
@@ -263,7 +263,7 @@ async function c_ack_request(sender_name,userRating,documentPath,args){
     let transactions
     let promises = []
         args.node.files.read(documentPath
-            , (err, res) => {
+            , async (err, res) => {
                 if(err) {
                     rating=userRating
                     transactions=1
@@ -285,7 +285,7 @@ async function c_ack_request(sender_name,userRating,documentPath,args){
                         })
                         }
                         })
-                        args.db.ServiceRequest.update({status:RequestStatus.c_ack},{where: {sender:sender.dataValues.ipfs , status: RequestStatus.sp_ack}}).then((res)=>{
+                        args.db.ServiceRequest.update({status:RequestStatus.c_ack},{where: {sender:sender.dataValues.ipfs , status: RequestStatus.sp_ack}}).then(async (res)=>{
                             let info=await args.node.id()
                                let result=await message.sendMessageToUser({
                                     sender: info.id,
@@ -339,7 +339,7 @@ async function c_ack_request(sender_name,userRating,documentPath,args){
                         console.log('File Hash = ' + hash)
                         }
                         })
-                        args.db.ServiceRequest.update({status:RequestStatus.c_ack},{where: {sender:sender.dataValues.ipfs , status: RequestStatus.sp_ack}}).then((res)=>{    
+                        args.db.ServiceRequest.update({status:RequestStatus.c_ack},{where: {sender:sender.dataValues.ipfs , status: RequestStatus.sp_ack}}).then(async (res)=>{    
                             let info=await args.node.id()
                                 let result=await message.sendMessageToUser({
                                     sender: info.id,
