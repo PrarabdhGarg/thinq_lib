@@ -99,7 +99,7 @@ async function addRequests(sender_ipfs,args){
                 action: message.MessageAction.REQUEST
             }
             console.log(sender_ipfs)
-            result=await message.sendMessageToUser(msg ,sender_ipfs)
+            result=await message.sendMessageToUser(msg ,sender_ipfs, args)
                 console.log("Request successfully added")
 
 }
@@ -113,7 +113,7 @@ async function deleteRequests(sender_name,args){
                     sender: info.id,
                     recipient: sender.dataValues.ipfs,
                     action: message.MessageAction.DELETE
-                } , sender.dataValues.ipfs)
+                } , sender.dataValues.ipfs, args)
                     console.log("Request successfully deleted")
 
 }
@@ -128,7 +128,7 @@ async function createcRequests(sender_name,args){
                 sender: info.id,
                 recipient: sender.dataValues.ipfs,
                 action: message.MessageAction.C_CREATE
-            } , sender.dataValues.ipfs)
+            } , sender.dataValues.ipfs, args)
                 console.log("Close request sent.")
 }
 
@@ -142,7 +142,7 @@ async function spcreatecRequests(sender_name,args){
                 sender: info.id,
                 recipient: sender.dataValues.ipfs,
                 action: message.MessageAction.SP_C_CREATE
-            } , sender.dataValues.ipfs)
+            } , sender.dataValues.ipfs, args)
                 console.log("Close request sent.")
 }
 
@@ -185,7 +185,7 @@ async function sp_ack_request(sender_name,userRating,documentPath,args){
                                         action:message.MessageAction.SP_ACK,
                                         rating:rating.toString(),
                                         transact:transactions.toString()
-                                    } , sender.dataValues.ipfs)
+                                    } , sender.dataValues.ipfs, args)
                                         console.log("Request acknowledged")
                                 })
                               
@@ -239,7 +239,7 @@ async function sp_ack_request(sender_name,userRating,documentPath,args){
                                         action: message.MessageAction.SP_ACK,
                                         rating:rating.toString(),
                                         transact:transactions.toString()
-                                    } , sender.dataValues.ipfs)
+                                    } , sender.dataValues.ipfs, args)
                                         console.log("Request acknowledged")
                                 })
                                 }
@@ -285,7 +285,7 @@ async function c_ack_request(sender_name,userRating,documentPath,args){
                                     action:message.MessageAction.C_ACK,
                                     rating:rating.toString(),
                                     transact:transactions.toString()
-                                } , sender.dataValues.ipfs)
+                                } , sender.dataValues.ipfs, args)
                                     console.log("Resolution process complete")
                             })
                           
@@ -339,7 +339,7 @@ async function c_ack_request(sender_name,userRating,documentPath,args){
                                     action: message.MessageAction.C_ACK,
                                     rating:rating.toString(),
                                     transact:transactions.toString()
-                                } , sender.dataValues.ipfs)
+                                } , sender.dataValues.ipfs, args)
                                     console.log("Resolution process complete")
                             })
                             }
