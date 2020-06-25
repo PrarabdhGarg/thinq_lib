@@ -11,7 +11,7 @@ const RequestStatus = {
 }
 // Returns a list of all the sent requests
 async function sentRequests(args){
-    let [requests]=await args.db.ServiceRequest.findAll({where: {status: RequestStatus.sent}})
+    let requests=await args.db.ServiceRequest.findAll({where: {status: RequestStatus.sent}})
         let promises = []
         for(request of requests)
             promises.push(args.db.User.findOne({where: {ipfs:request.dataValues.sender}}))
@@ -26,7 +26,7 @@ async function sentRequests(args){
 
 // Returns a list of all the pending requests sorted by priority
 async function pendingRequests(args, limit, offset){
-    let [requests]=await args.db.ServiceRequest.findAll({where: {status: RequestStatus.pending},order:[['priority']],
+    let requests=await args.db.ServiceRequest.findAll({where: {status: RequestStatus.pending},order:[['priority']],
     limit: limit,
     offset: offset})
         let promises = []
@@ -42,7 +42,7 @@ async function pendingRequests(args, limit, offset){
 
 // Returns a list of all the created close requests-whether as consumer or service provider
 async function createdcRequests(args){
-    let [requests]= await args.db.ServiceRequest.findAll({where: {status: RequestStatus.created}})
+    let requests= await args.db.ServiceRequest.findAll({where: {status: RequestStatus.created}})
         let promises = []
         for(request of requests)
             promises.push(args.db.User.findOne({where: {ipfs:request.dataValues.sender}}))
@@ -56,7 +56,7 @@ async function createdcRequests(args){
 
 // Returns a list of all the close requests to be acknowledged as an SP (Step 2)
 async function createdspRequests(args){
-    let [requests]= await args.db.ServiceRequest.findAll({where: {status: RequestStatus.created,display:"2"}})
+    let requests= await args.db.ServiceRequest.findAll({where: {status: RequestStatus.created,display:"2"}})
         let promises = []
         for(request of requests)
             promises.push(args.db.User.findOne({where: {ipfs:request.dataValues.sender}}))
@@ -70,7 +70,7 @@ async function createdspRequests(args){
 
 // Returns a list of all the close requests to be acknowledged as a consumer (Step 3)
 async function spackRequests(args){
-    let [requests]= await args.db.ServiceRequest.findAll({where: {status: RequestStatus.sp_ack,display:"2"}})
+    let requests= await args.db.ServiceRequest.findAll({where: {status: RequestStatus.sp_ack,display:"2"}})
         let promises = []
         for(request of requests)
             promises.push(args.db.User.findOne({where: {ipfs:request.dataValues.sender}}))
@@ -84,7 +84,7 @@ async function spackRequests(args){
 
 // Returns a list of all the resolved requests
 async function cackRequests(args){
-    let [requests]= await args.db.ServiceRequest.findAll({where: {status: RequestStatus.c_ack}})
+    let requests= await args.db.ServiceRequest.findAll({where: {status: RequestStatus.c_ack}})
         let promises = []
         for(request of requests)
             promises.push(args.db.User.findOne({where: {ipfs:request.dataValues.sender}}))
@@ -104,7 +104,7 @@ async function addRequests(sender_ipfs,args){
             let msg = {
                 sender : info.id,
                 recipient: sender_ipfs,
-                action: message.messageAction.REQUEST
+                action: message.MessageAction.REQUEST
             }
             console.log(sender_ipfs)
             result=await message.sendMessageToUser(msg ,sender_ipfs)
