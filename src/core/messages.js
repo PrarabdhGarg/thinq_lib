@@ -164,6 +164,6 @@ module.exports = {
     sendMessageToUser: sendMessageToUser,
     broadcastMessageToAddressBook: broadcastMessageToAddressBook,
     onMessageRecived: onMessageRecived,
-    MessageAction: MessageAction,
-    RequestStatus: RequestStatus
+    RequestStatus:RequestStatus,
+    MessageAction: MessageAction
 }
