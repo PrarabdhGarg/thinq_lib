@@ -1,16 +1,9 @@
 const message = require('./messages')
 
 
-const RequestStatus = {
-    sent:1,
-    pending:2,
-    created:3,
-    sp_ack:4,
-    c_ack:5
-}
 // Returns a list of all the sent requests
 async function sentRequests(args){
-    let [requests]=await args.db.ServiceRequest.findAll({where: {status: RequestStatus.sent}})
+    let [requests]=await args.db.ServiceRequest.findAll({where: {status: message.RequestStatus.sent}})
         let promises = []
         for(request of requests)
             promises.push(args.db.User.findOne({where: {ipfs:request.dataValues.sender}}))
@@ -25,7 +18,7 @@ async function sentRequests(args){
 
 // Returns a list of all the pending requests sorted by priority
 async function pendingRequests(args, limit, offset){
-    let [requests]=await args.db.ServiceRequest.findAll({where: {status: RequestStatus.pending},order:[['priority']],
+    let [requests]=await args.db.ServiceRequest.findAll({where: {status: message.RequestStatus.pending},order:[['priority']],
     limit: limit,
     offset: offset})
         let promises = []
@@ -41,7 +34,7 @@ async function pendingRequests(args, limit, offset){
 
 // Returns a list of all the created close requests-whether as consumer or service provider
 async function createdcRequests(args){
-    let [requests]= await args.db.ServiceRequest.findAll({where: {status: RequestStatus.created}})
+    let [requests]= await args.db.ServiceRequest.findAll({where: {status: message.RequestStatus.created}})
         let promises = []
         for(request of requests)
             promises.push(args.db.User.findOne({where: {ipfs:request.dataValues.sender}}))
@@ -55,7 +48,7 @@ async function createdcRequests(args){
 
 // Returns a list of all the close requests to be acknowledged as an SP (Step 2)
 async function createdspRequests(args){
-    let [requests]= await args.db.ServiceRequest.findAll({where: {status: RequestStatus.created,display:"2"}})
+    let [requests]= await args.db.ServiceRequest.findAll({where: {status: message.RequestStatus.created,display:"2"}})
         let promises = []
         for(request of requests)
             promises.push(args.db.User.findOne({where: {ipfs:request.dataValues.sender}}))
@@ -69,7 +62,7 @@ async function createdspRequests(args){
 
 // Returns a list of all the close requests to be acknowledged as a consumer (Step 3)
 async function spackRequests(args){
-    let [requests]= await args.db.ServiceRequest.findAll({where: {status: RequestStatus.sp_ack,display:"2"}})
+    let [requests]= await args.db.ServiceRequest.findAll({where: {status: message.RequestStatus.sp_ack,display:"2"}})
         let promises = []
         for(request of requests)
             promises.push(args.db.User.findOne({where: {ipfs:request.dataValues.sender}}))
@@ -83,7 +76,7 @@ async function spackRequests(args){
 
 // Returns a list of all the resolved requests
 async function cackRequests(args){
-    let [requests]= await args.db.ServiceRequest.findAll({where: {status: RequestStatus.c_ack}})
+    let [requests]= await args.db.ServiceRequest.findAll({where: {status: message.RequestStatus.c_ack}})
         let promises = []
         for(request of requests)
             promises.push(args.db.User.findOne({where: {ipfs:request.dataValues.sender}}))
@@ -98,7 +91,7 @@ async function cackRequests(args){
 
 // Sends requests to the SP
 async function addRequests(sender_ipfs,args){
-    let result= await args.db.ServiceRequest.create({sender:sender_ipfs , status: RequestStatus.sent})
+    let result= await args.db.ServiceRequest.create({sender:sender_ipfs , status: message.RequestStatus.sent})
         let info=await args.node.id()
             let msg = {
                 sender : info.id,
@@ -114,7 +107,7 @@ async function addRequests(sender_ipfs,args){
 // Deletes request
 async function deleteRequests(sender_name,args){
     let sender=await args.db.User.findOne({where: {name:sender_name}})
-        let result=await args.db.ServiceRequest.destroy({where: {sender: sender.dataValues.ipfs, status: RequestStatus.sent}})
+        let result=await args.db.ServiceRequest.destroy({where: {sender: sender.dataValues.ipfs, status: message.RequestStatus.sent}})
         let info=await args.node.id()
             result=await message.sendMessageToUser({
                     sender: info.id,
@@ -128,8 +121,8 @@ async function deleteRequests(sender_name,args){
 // Initiates the resolution process from consumer's side and creates a close request
 async function createcRequests(sender_name,args){
     let sender = await args.db.User.findOne({where: {name:sender_name}})
-    let result=await args.db.ServiceRequest.destroy({where: {sender: sender.dataValues.ipfs, status: RequestStatus.sent}})
-    result=await args.db.ServiceRequest.create({sender:sender.dataValues.ipfs , status: RequestStatus.created,display:"1"}) 
+    let result=await args.db.ServiceRequest.destroy({where: {sender: sender.dataValues.ipfs, status: message.RequestStatus.sent}})
+    result=await args.db.ServiceRequest.create({sender:sender.dataValues.ipfs , status: message.RequestStatus.created,display:"1"}) 
         let info=await args.node.id()
             result=await message.sendMessageToUser({
                 sender: info.id,
@@ -142,8 +135,8 @@ async function createcRequests(sender_name,args){
 // Initiates the resolution process from SP's side
 async function spcreatecRequests(sender_name,args){
     let sender=await args.db.User.findOne({where: {name:sender_name}})
-    let result=await args.db.ServiceRequest.destroy({where: {sender: sender.dataValues.ipfs, status: RequestStatus.pending}})
-        result=await args.db.ServiceRequest.create({sender:sender.dataValues.ipfs , status: RequestStatus.created,display:"2"})
+    let result=await args.db.ServiceRequest.destroy({where: {sender: sender.dataValues.ipfs, status: message.RequestStatus.pending}})
+        result=await args.db.ServiceRequest.create({sender:sender.dataValues.ipfs , status: message.RequestStatus.created,display:"2"})
         let info=await args.node.id()
             result=await message.sendMessageToUser({
                 sender: info.id,
@@ -184,7 +177,7 @@ async function sp_ack_request(sender_name,userRating,documentPath,args){
                             })
                             }
                             })
-                            args.db.ServiceRequest.update({status:RequestStatus.sp_ack,display:"1"},{where: {sender:sender.dataValues.ipfs , status: RequestStatus.created}}).then(async (res)=>{
+                            args.db.ServiceRequest.update({status:message.RequestStatus.sp_ack,display:"1"},{where: {sender:sender.dataValues.ipfs , status: message.RequestStatus.created}}).then(async (res)=>{
                                 let info=await args.node.id()
                                    let result=await message.sendMessageToUser({
                                         sender: info.id,
@@ -238,7 +231,7 @@ async function sp_ack_request(sender_name,userRating,documentPath,args){
                             console.log('File Hash = ' + hash)
                             }
                             })
-                            args.db.ServiceRequest.update({status:RequestStatus.sp_ack,display:"1"},{where: {sender:sender.dataValues.ipfs , status: RequestStatus.created}}).then(async (res)=>{    
+                            args.db.ServiceRequest.update({status:message.RequestStatus.sp_ack,display:"1"},{where: {sender:sender.dataValues.ipfs , status: message.RequestStatus.created}}).then(async (res)=>{    
                                 let info=await args.node.id()
                                     let result=await message.sendMessageToUser({
                                         sender: info.id,
@@ -284,7 +277,7 @@ async function c_ack_request(sender_name,userRating,documentPath,args){
                         })
                         }
                         })
-                        args.db.ServiceRequest.update({status:RequestStatus.c_ack},{where: {sender:sender.dataValues.ipfs , status: RequestStatus.sp_ack}}).then(async (res)=>{
+                        args.db.ServiceRequest.update({status:message.RequestStatus.c_ack},{where: {sender:sender.dataValues.ipfs , status: message.RequestStatus.sp_ack}}).then(async (res)=>{
                             let info=await args.node.id()
                                let result=await message.sendMessageToUser({
                                     sender: info.id,
@@ -338,7 +331,7 @@ async function c_ack_request(sender_name,userRating,documentPath,args){
                         console.log('File Hash = ' + hash)
                         }
                         })
-                        args.db.ServiceRequest.update({status:RequestStatus.c_ack},{where: {sender:sender.dataValues.ipfs , status: RequestStatus.sp_ack}}).then(async (res)=>{    
+                        args.db.ServiceRequest.update({status:message.RequestStatus.c_ack},{where: {sender:sender.dataValues.ipfs , status: message.RequestStatus.sp_ack}}).then(async (res)=>{    
                             let info=await args.node.id()
                                 let result=await message.sendMessageToUser({
                                     sender: info.id,
@@ -355,7 +348,6 @@ async function c_ack_request(sender_name,userRating,documentPath,args){
 
 
 module.exports={
-    RequestStatus:RequestStatus,
     sentRequests:sentRequests,
     pendingRequests:pendingRequests,
     createdcRequests:createdcRequests,
