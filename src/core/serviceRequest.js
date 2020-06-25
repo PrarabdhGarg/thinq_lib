@@ -7,7 +7,6 @@ const RequestStatus = {
     created:3,
     sp_ack:4,
     c_ack:5
-
 }
 // Returns a list of all the sent requests
 async function sentRequests(args){
@@ -104,7 +103,7 @@ async function addRequests(sender_ipfs,args){
             let msg = {
                 sender : info.id,
                 recipient: sender_ipfs,
-                action: message.messageAction.REQUEST
+                action: message.MessageAction.REQUEST
             }
             console.log(sender_ipfs)
             result=await message.sendMessageToUser(msg ,sender_ipfs)
@@ -120,7 +119,7 @@ async function deleteRequests(sender_name,args){
             result=await message.sendMessageToUser({
                     sender: info.id,
                     recipient: sender.dataValues.ipfs,
-                    action: message.messageAction.DELETE
+                    action: message.MessageAction.DELETE
                 } , sender.dataValues.ipfs)
                     console.log("Request successfully deleted")
 
@@ -135,7 +134,7 @@ async function createcRequests(sender_name,args){
             result=await message.sendMessageToUser({
                 sender: info.id,
                 recipient: sender.dataValues.ipfs,
-                action: message.messageAction.C_CREATE
+                action: message.MessageAction.C_CREATE
             } , sender.dataValues.ipfs)
                 console.log("Close request sent.")
 }
@@ -149,7 +148,7 @@ async function spcreatecRequests(sender_name,args){
             result=await message.sendMessageToUser({
                 sender: info.id,
                 recipient: sender.dataValues.ipfs,
-                action: message.messageAction.SP_C_CREATE
+                action: message.MessageAction.SP_C_CREATE
             } , sender.dataValues.ipfs)
                 console.log("Close request sent.")
 }
@@ -190,7 +189,7 @@ async function sp_ack_request(sender_name,userRating,documentPath,args){
                                    let result=await message.sendMessageToUser({
                                         sender: info.id,
                                         recipient: sender.dataValues.ipfs,
-                                        action:message.messageAction.SP_ACK,
+                                        action:message.MessageAction.SP_ACK,
                                         rating:rating.toString(),
                                         transact:transactions.toString()
                                     } , sender.dataValues.ipfs)
@@ -244,7 +243,7 @@ async function sp_ack_request(sender_name,userRating,documentPath,args){
                                     let result=await message.sendMessageToUser({
                                         sender: info.id,
                                         recipient: sender.dataValues.ipfs,
-                                        action: message.messageAction.SP_ACK,
+                                        action: message.MessageAction.SP_ACK,
                                         rating:rating.toString(),
                                         transact:transactions.toString()
                                     } , sender.dataValues.ipfs)
@@ -290,7 +289,7 @@ async function c_ack_request(sender_name,userRating,documentPath,args){
                                let result=await message.sendMessageToUser({
                                     sender: info.id,
                                     recipient: sender.dataValues.ipfs,
-                                    action:message.messageAction.C_ACK,
+                                    action:message.MessageAction.C_ACK,
                                     rating:rating.toString(),
                                     transact:transactions.toString()
                                 } , sender.dataValues.ipfs)
@@ -344,7 +343,7 @@ async function c_ack_request(sender_name,userRating,documentPath,args){
                                 let result=await message.sendMessageToUser({
                                     sender: info.id,
                                     recipient: sender.dataValues.ipfs,
-                                    action: message.messageAction.C_ACK,
+                                    action: message.MessageAction.C_ACK,
                                     rating:rating.toString(),
                                     transact:transactions.toString()
                                 } , sender.dataValues.ipfs)
