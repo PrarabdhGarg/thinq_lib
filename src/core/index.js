@@ -86,17 +86,17 @@ async function register(init_info , args){
 }
 
 async function addUser(id, name, args){
-    args.node.get(id).then(([info])=>{
-        let user_info = JSON.parse(info.content.toString())
-        args.db.User.create({type:user_info.type , name:user_info.name , filehash:id , publicKey:user_info.publicKey , ipfs:user_info.ipfs , bio:user_info.bio , rating: user_info.rating}).then((user) => {
-            args.node.get(user_info.bio).then(([bio])=>{
-                user_info['bio'] = bio.content.toString()
-                user_info['ipfs'] = user_info['IPFSHash']
-                user_info['name'] = name
-                return user_info
-            })
-        })
-    })
+    let [info] = await args.node.get(id)
+
+    let user_info = JSON.parse(info.content.toString())
+    args.db.User.create({type:user_info.type , name:user_info.name , filehash:id , publicKey:user_info.publicKey , ipfs:user_info.ipfs , bio:user_info.bio , rating: user_info.rating})
+    
+    let [bio] = await args.node.get(user_info.bio)
+    user_info['bio'] = bio.content.toString()
+    user_info['ipfs'] = user_info['IPFSHash']
+    user_info['name'] = name
+    
+    return user_info
 }
 
 
