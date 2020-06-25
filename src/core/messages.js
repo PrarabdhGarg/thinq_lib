@@ -1,6 +1,5 @@
 const cryptography = require('../util/cryptography')
 const gdf = require('../util/gdf')
-const servicerequest=require('./serviceRequest')
 
 
 const MessageAction = {
@@ -12,6 +11,14 @@ const MessageAction = {
     C_ACK:6,
     SP_C_CREATE:7,
     RATE_UPDATE:8
+}
+
+const RequestStatus = {
+    sent:1,
+    pending:2,
+    created:3,
+    sp_ack:4,
+    c_ack:5
 }
 
 function broadcastMessageToRoom(message, args) {
@@ -38,7 +45,7 @@ async function sendMessageToUser(msg, user, args) {
     if(args.room.hasPeer(user))
         args.room.sendTo(user, msg)
     else
-        args.db.PendingMessages.create(message)
+        args.db.PendingMessages.create(msg)
 }
 
 async function onMessageRecived(args, message, callback) {
@@ -76,14 +83,14 @@ async function onMessageRecived(args, message, callback) {
             rating = 0
         }
         console.log('Rating = ' + rating.toString())
-        args.db.ServiceRequest.create({sender: message.from , status:servicerequest.RequestStatus.pending , rating: rating})
+        args.db.ServiceRequest.create({sender: message.from , status:RequestStatus.pending , rating: rating})
     } else if(decoded_msg.action == MessageAction.DELETE) {
-        args.db.ServiceRequest.destroy({where : {sender: message.from,status:servicerequest.RequestStatus.pending}})
+        args.db.ServiceRequest.destroy({where : {sender: message.from,status:RequestStatus.pending}})
     } else if(decoded_msg.action == MessageAction.C_CREATE) {
-        args.db.ServiceRequest.destroy({where : {sender: message.from,status:servicerequest.RequestStatus.pending}})
-        args.db.ServiceRequest.create({sender:message.from,status:servicerequest.RequestStatus.created,display:"2"})
+        args.db.ServiceRequest.destroy({where : {sender: message.from,status:RequestStatus.pending}})
+        args.db.ServiceRequest.create({sender:message.from,status:RequestStatus.created,display:"2"})
     } else if(decoded_msg.action == MessageAction.SP_ACK) {
-        args.db.ServiceRequest.update({status:servicerequest.RequestStatus.sp_ack,display:"2"},{where: {sender:message.from , status: servicerequest.RequestStatus.created}})
+        args.db.ServiceRequest.update({status:RequestStatus.sp_ack,display:"2"},{where: {sender:message.from , status: RequestStatus.created}})
         info = await args.node.id()
         console.log("server SP_ack infoid is written here:",info.id.toString())
         documentPath='/ratings/' + info.id.toString() + '.txt'
@@ -105,7 +112,7 @@ async function onMessageRecived(args, message, callback) {
             transact:decoded_msg.transact
         })  
     } else if(decoded_msg.action == MessageAction.C_ACK) {
-        args.db.ServiceRequest.update({status:servicerequest.RequestStatus.c_ack},{where: {sender:message.from , status: servicerequest.RequestStatus.sp_ack}})
+        args.db.ServiceRequest.update({status:RequestStatus.c_ack},{where: {sender:message.from , status: RequestStatus.sp_ack}})
         info = await args.node.id()
         console.log("server C_ack infoid is:",info.id.toString())
         documentPath='/ratings/' + info.id.toString() + '.txt'
@@ -129,8 +136,8 @@ async function onMessageRecived(args, message, callback) {
         })
      
     } else if(decoded_msg.action == MessageAction.SP_C_CREATE) {
-        args.db.ServiceRequest.destroy({where : {sender: message.from,status:servicerequest.RequestStatus.sent}})
-        args.db.ServiceRequest.create({sender:message.from,status:servicerequest.RequestStatus.created,display:"1"})
+        args.db.ServiceRequest.destroy({where : {sender: message.from,status:RequestStatus.sent}})
+        args.db.ServiceRequest.create({sender:message.from,status:RequestStatus.created,display:"1"})
     } else if(decoded_msg.action == MessageAction.RATE_UPDATE) {
         documentPath='/ratings/' + message.from.toString() + '.txt'
         console.log("------------------------server rateupdate id is:",message.from.toString())
@@ -157,5 +164,6 @@ module.exports = {
     sendMessageToUser: sendMessageToUser,
     broadcastMessageToAddressBook: broadcastMessageToAddressBook,
     onMessageRecived: onMessageRecived,
+    RequestStatus:RequestStatus,
     MessageAction: MessageAction
 }
