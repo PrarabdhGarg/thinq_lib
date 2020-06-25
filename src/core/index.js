@@ -35,6 +35,25 @@ async function init(args = {}){
     for(model of Object.keys(db))
         await db[model].sync({force: false})
 
+    room.on('peer joined', (cid) => {
+        db.PendingMessages.findAll({
+            where: {
+                reciver: cid
+            }
+        }).then((res) => {
+            if(res.length != 0) {
+                for (let message of res) {
+                    messages.sendMessageToUser(message, cid)
+                }
+                db.PendingMessages.destroy({
+                    where: {
+                        id: message.id
+                    }
+                })
+            }
+        })
+    })
+
     room.on('message', (message) => {
         messages.onMessageRecived({
             db: db,
