@@ -6,32 +6,22 @@ const cryptography = require('../util/cryptography')
 
 // Uploads a file parsed using FileReader to ipfs,adds it to filebook and returns the hash of newly uploaded file
 async function uploadfile(file,documentPath,filename,args){
-    args.node.id().then(async (info)=>{  
-        let hash
-        args.node.files.write(documentPath, Buffer.from(file), {
-                create: true,
-                parents: true
-            }, (err, resp) => {
-                if(err) {
-                    console.log("Error in inserting file " + err.message)
-                } else {
-                    args.node.files.stat(documentPath, (err, respon) => {
-                        if(err) {
-                        }
-                        hash = respon.hash
-                        console.log('Hash of uploaded file is = ' + hash)
-                        args.db.FileBook.findOne({ where: { 'ipfs_hash':hash.toString()} }).then(async (token) => {
-                            if(token === null)
-                            {
-                            args.db.FileBook.create({ipfs_hash: hash.toString(),name:filename})
-                            return hash.toString()
-                            }
-                         })
-                        })
-                        
-                    }
-                })
-})
+    info = await args.node.id() 
+    let hash
+    try {
+        await args.node.files.write(documentPath, Buffer.from(file), {create: true,parents: true})
+    } catch(e) {
+        console.log('Error in adding file to IPFS system')
+        console.log(e)
+    }   
+    respon = await args.node.files.stat(documentPath)
+    hash = respon.hash
+    console.log('Hash of uploaded file is = ' + hash)
+    token = await args.db.FileBook.findOne({ where: { 'ipfs_hash':hash.toString()} })
+    if(token === null) {
+        args.db.FileBook.create({ipfs_hash: hash.toString(),name:filename})
+        return hash.toString()
+    }        
 }
 
 // Returns the filebook of a user
@@ -42,8 +32,7 @@ async function getFilebook(args){
     return files
 }
 
-module.exports =
-{   
+module.exports = {   
     uploadfile:uploadfile,    
     getFilebook:getFilebook
 }
