@@ -185,9 +185,9 @@ async function sp_ack_request(sender_name,userRating,documentPath,args){
                             })
                             }
                             })
-                            let result=await args.db.ServiceRequest.update({status:RequestStatus.sp_ack,display:"1"},{where: {sender:sender.dataValues.ipfs , status: RequestStatus.created}})
+                            args.db.ServiceRequest.update({status:RequestStatus.sp_ack,display:"1"},{where: {sender:sender.dataValues.ipfs , status: RequestStatus.created}}).then((res)=>{
                                 let info=await args.node.id()
-                                   result=await message.sendMessageToUser({
+                                   let result=await message.sendMessageToUser({
                                         sender: info.id,
                                         recipient: sender.dataValues.ipfs,
                                         action:message.messageAction.SP_ACK,
@@ -195,6 +195,7 @@ async function sp_ack_request(sender_name,userRating,documentPath,args){
                                         transact:transactions.toString()
                                     } , sender.dataValues.ipfs)
                                         console.log("Request acknowledged")
+                                })
                               
                    } 
                    else {
@@ -232,15 +233,15 @@ async function sp_ack_request(sender_name,userRating,documentPath,args){
                             }
                             console.log('Stat Result = ' + JSON.stringify(respon))
                             hash = respon.hash
-                            let result=await args.db.User.update({ratinghash:hash},{where: {ipfs:sender.dataValues.ipfs}})
+                            args.db.User.update({ratinghash:hash},{where: {ipfs:sender.dataValues.ipfs}})
                                 console.log("The updated hash spack is:",hash)
                             })
                             console.log('File Hash = ' + hash)
                             }
                             })
-                            result=await args.db.ServiceRequest.update({status:RequestStatus.sp_ack,display:"1"},{where: {sender:sender.dataValues.ipfs , status: RequestStatus.created}})    
+                            args.db.ServiceRequest.update({status:RequestStatus.sp_ack,display:"1"},{where: {sender:sender.dataValues.ipfs , status: RequestStatus.created}}).then((res)=>{    
                                 let info=await args.node.id()
-                                    result=await message.sendMessageToUser({
+                                    let result=await message.sendMessageToUser({
                                         sender: info.id,
                                         recipient: sender.dataValues.ipfs,
                                         action: message.messageAction.SP_ACK,
@@ -248,6 +249,7 @@ async function sp_ack_request(sender_name,userRating,documentPath,args){
                                         transact:transactions.toString()
                                     } , sender.dataValues.ipfs)
                                         console.log("Request acknowledged")
+                                })
                                 }
 })
 }
@@ -283,9 +285,9 @@ async function c_ack_request(sender_name,userRating,documentPath,args){
                         })
                         }
                         })
-                        let result=await args.db.ServiceRequest.update({status:RequestStatus.c_ack},{where: {sender:sender.dataValues.ipfs , status: RequestStatus.sp_ack}})
+                        args.db.ServiceRequest.update({status:RequestStatus.c_ack},{where: {sender:sender.dataValues.ipfs , status: RequestStatus.sp_ack}}).then((res)=>{
                             let info=await args.node.id()
-                               result=await message.sendMessageToUser({
+                               let result=await message.sendMessageToUser({
                                     sender: info.id,
                                     recipient: sender.dataValues.ipfs,
                                     action:message.messageAction.C_ACK,
@@ -293,6 +295,7 @@ async function c_ack_request(sender_name,userRating,documentPath,args){
                                     transact:transactions.toString()
                                 } , sender.dataValues.ipfs)
                                     console.log("Resolution process complete")
+                            })
                           
                } 
                else {
@@ -330,15 +333,15 @@ async function c_ack_request(sender_name,userRating,documentPath,args){
                         }
                         console.log('Stat Result = ' + JSON.stringify(respon))
                         hash = respon.hash
-                        let result=await args.db.User.update({ratinghash:hash},{where: {ipfs:sender.dataValues.ipfs}})
+                        args.db.User.update({ratinghash:hash},{where: {ipfs:sender.dataValues.ipfs}})
                             console.log("The updated hash spack is:",hash)
                         })
                         console.log('File Hash = ' + hash)
                         }
                         })
-                        result=await args.db.ServiceRequest.update({status:RequestStatus.c_ack},{where: {sender:sender.dataValues.ipfs , status: RequestStatus.sp_ack}})    
+                        args.db.ServiceRequest.update({status:RequestStatus.c_ack},{where: {sender:sender.dataValues.ipfs , status: RequestStatus.sp_ack}}).then((res)=>{    
                             let info=await args.node.id()
-                                result=await message.sendMessageToUser({
+                                let result=await message.sendMessageToUser({
                                     sender: info.id,
                                     recipient: sender.dataValues.ipfs,
                                     action: message.messageAction.C_ACK,
@@ -346,6 +349,7 @@ async function c_ack_request(sender_name,userRating,documentPath,args){
                                     transact:transactions.toString()
                                 } , sender.dataValues.ipfs)
                                     console.log("Resolution process complete")
+                            })
                             }
 })
 }
