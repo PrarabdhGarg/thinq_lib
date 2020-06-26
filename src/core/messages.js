@@ -38,8 +38,10 @@ async function sendMessageToUser(msg, user, args) {
 }
 
 async function onMessageRecived(args, message, callback) {
-    let decrypted_msg = await cryptography.getDecryptedText(message.data.toString())
+    let decrypted_msg = await cryptography.getDecryptedText(message.data.toString(), args.passphrase)
     let decoded_msg = await gdf.gdf_decode(decrypted_msg)
+
+    console.log('Entered Message Listener')
 
     if(decoded_msg.action == MessageAction.UPDATE) {
         user_info = await args.db.User.findOne({where : {ipfs:message.from}})

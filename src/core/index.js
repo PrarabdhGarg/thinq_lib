@@ -11,7 +11,8 @@ async function init(args = {}){
     let repo_path = args.hasOwnProperty('path') ? args.path : path.join(__dirname , 'ipfs/thinq/')
     let room_name = args.hasOwnProperty('rname') ? args.rname : 'room1'
     let callback = args.hasOwnProperty('messageCallback') ? args.messageCallback : () => {}
-    
+    let passphrase = args.hasOwnProperty('passphrase') ? args.passphrase : 'This is a long and hard to guess String that acts as a passphrase @&$($'
+
     const node = await IPFS.create({
         repo:  repo_path,
         init: true,
@@ -56,23 +57,26 @@ async function init(args = {}){
     })
 
     room.on('message', (message) => {
+        console.log('Inside actual message listener')
         messages.onMessageRecived({
             db: db,
             node: node,
-            room: room
+            room: room,
+            passphrase: passphrase
         }, message, callback)
     })
 
     return {
         db : db ,
         node : node ,
-        room : room
+        room : room,
+        passphrase: passphrase
     }
 }
 
 async function register(init_info , args){
     info = await args.node.id()
-    await cryptography.generateKeys()
+    await cryptography.generateKeys(args.passphrase)
     let public_key = cryptography.getPublicKey()
 
     stats = await Promise.all([args.node.add(public_key) , args.node.add(init_info.bio)])

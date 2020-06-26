@@ -1,14 +1,15 @@
 const openpgp = require('openpgp')
 const fs = require('fs')
 
-async function generateKeys(name, email, secret) {
+async function generateKeys(secret) {
+    console.log(secret)
     let publicKey, privateKey
     try {
         privateKey = fs.readFileSync('./.private.txt')
         publicKey = fs.readFileSync('./.public.txt')
     } catch(e) {
         const { privateKeyArmored, publicKeyArmored, revocationCertificate } = await openpgp.generateKey({
-            userIds: [{ name: name, email: email }],
+            userIds: [{ name: 'name', email: 'prarabdhgrg@gmail.com' }],
             curve: 'ed25519',
             passphrase: secret
         });
@@ -37,6 +38,7 @@ async function getEncryptedText(text, publicKey) {
 }
 
 async function getDecryptedText(encrypted, secret) {
+    console.log(secret)
     passphrase = secret
     privKey = fs.readFileSync('./.private.txt')
     const { keys: [privateKey] } = await openpgp.key.readArmored(privKey);
