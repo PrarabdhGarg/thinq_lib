@@ -11,8 +11,15 @@ async function init(args = {}){
     let repo_path = args.hasOwnProperty('path') ? args.path : path.join(__dirname , 'ipfs/thinq/')
     let room_name = args.hasOwnProperty('rname') ? args.rname : 'room1'
     let callback = args.hasOwnProperty('messageCallback') ? args.messageCallback : () => {}
-    let passphrase = args.hasOwnProperty('passphrase') ? args.passphrase : 'This is a long and hard to guess String that acts as a passphrase @&$($'
-
+    let pass = args.hasOwnProperty('passphrase') ? args.passphrase : 'This is a long and hard to guess String that acts as a passphrase @&$($'
+    let user = args.hasOwnProperty('user') ? args.user : 'ThinQuser'
+    let email = args.hasOwnProperty('email') ? args.email : 'example@example.com'
+    let passphrase = {
+        pass: pass,
+        user: user,
+        email: email
+    }
+ 
     const node = await IPFS.create({
         repo:  repo_path,
         init: true,

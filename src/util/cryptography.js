@@ -9,9 +9,9 @@ async function generateKeys(secret) {
         publicKey = fs.readFileSync('./.public.txt')
     } catch(e) {
         const { privateKeyArmored, publicKeyArmored, revocationCertificate } = await openpgp.generateKey({
-            userIds: [{ name: 'name', email: 'prarabdhgrg@gmail.com' }],
+            userIds: [{ name: secret.name, email: secret.email }],
             curve: 'ed25519',
-            passphrase: secret
+            passphrase: secret.pass
         });
         console.log(privateKeyArmored);
         console.log(publicKeyArmored);
@@ -39,7 +39,7 @@ async function getEncryptedText(text, publicKey) {
 
 async function getDecryptedText(encrypted, secret) {
     console.log(secret)
-    passphrase = secret
+    passphrase = secret.pass
     privKey = fs.readFileSync('./.private.txt')
     const { keys: [privateKey] } = await openpgp.key.readArmored(privKey);
     await privateKey.decrypt(passphrase);
