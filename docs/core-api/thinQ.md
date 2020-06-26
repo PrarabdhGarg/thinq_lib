@@ -5,9 +5,10 @@
 
     Parameters:
     * args (Object): All fields in the object are optional, and can be used to coustomize a few settings of the framework. The fields of the object include:
-        - path: The relative address of the directly where you want to store the meta-deta of your IPFS file system. It is set to /ipfs/thinq by default
-        - rname: The name of the Pub/Sub Room used to communicate between online peers. It is set to Room1 by default
-        - messageCallback: A function, that takes an Object as parameter, and is called everytime a message is recived by the IPFS node. The object would contain the decoded message, and would have the following fields:
+        - path (String): The relative address of the directly where you want to store the meta-deta of your IPFS file system. It is set to /ipfs/thinq by default
+        - passphrase (String): A long and hard to guess string, that would be used to generate and protect your private key. You can recover your private key anytime with the help of this string
+        - rname (String): The name of the Pub/Sub Room used to communicate between online peers. It is set to Room1 by default
+        - messageCallback (function(Object)): A function, that takes an Object as parameter, and is called everytime a message is recived by the IPFS node. The object would contain the decoded message, and would have the following fields:
             - uid: A unique id for the message
             - sender: The IPFS id of the sender
             - action: What the message was generated for.
@@ -21,6 +22,7 @@
         - node: The reference of your IPFS node
         - db: The reference of the local GDF database
         - room: The reference of the Pub/Sub room used for communication between peers
+        - String: The passphrase that was used to generate the private key. If you entered a string in the passphrase field above, it would be the same string. Otherwise it would return the one randomly generated and used by the framework
 
 
 - #### thinq.thinQ.register(init_info, args)
