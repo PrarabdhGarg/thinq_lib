@@ -1,5 +1,5 @@
 const md5 = require("md5")
-const MessageAction = require('../core/messages').MessageAction
+const MessageAction = require('../core/messageAction')
 
 function gdf_encode(object) {
     sender = object.hasOwnProperty('sender') ? object['sender'] : "Anon"

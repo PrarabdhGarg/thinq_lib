@@ -4,6 +4,7 @@ const Room = require('ipfs-pubsub-room')
 const database = require('../../models/database')
 const cryptography = require('../util/cryptography')
 const messages = require('./messages')
+const messageAction = require('./messageAction')
 
 
 async function init(args = {}){
@@ -88,12 +89,11 @@ async function register(init_info , args){
 async function addUser(id, name, args){
     let [info] = await args.node.get(id)
 
-    let user_info = JSON.parse(info.content.toString())
-    args.db.User.create({type:user_info.type , name:user_info.name , filehash:id , publicKey:user_info.publicKey , ipfs:user_info.ipfs , bio:user_info.bio , rating: user_info.rating})
+    let user_info = await JSON.parse(info.content.toString())
+    await args.db.User.create({type:user_info.type , name:user_info.name , filehash:id , publicKey:user_info.publicKey , ipfs:user_info.ipfs , bio:user_info.bio , rating: user_info.rating})
     
     let [bio] = await args.node.get(user_info.bio)
     user_info['bio'] = bio.content.toString()
-    user_info['ipfs'] = user_info['IPFSHash']
     user_info['name'] = name
     
     return user_info
