@@ -29,7 +29,7 @@ async function broadcastMessageToAddressBook(message, args) {
 async function sendMessageToUser(msg, user, args) {
     message = gdf.gdf_encode(msg)
     pkHash = (await args.db.User.findOne({where: {ipfs: user}})).dataValues.publicKey
-    [file] = await args.node.get(pkHash)
+    let [file] = await args.node.get(pkHash)
     msg = await cryptography.getEncryptedText(message, file.content.toString())
     if(args.room.hasPeer(user))
         args.room.sendTo(user, msg)
