@@ -8,7 +8,7 @@ Currently, the framework offers the following features:
 - **Prioritization of Requests:** Service requests can be prioritized based on ratings given by other users, in order to ensure that all nodes present on the network have good incentives to remain fair.  
 
 ## The Idea
-The framework is created as an implementation of [theIdea](https://github.com/gnowledge/thinq_lib/blob/master/docs/conceptNote)
+The framework is created as an implementation of [the Idea](https://github.com/gnowledge/thinq_lib/blob/master/docs/conceptNote.md)
 
 ## Using the framework as a developer
 For a detailed explanation of all the functions and APIs exposed by the framework, please check out the documentation [here](https://github.com/gnowledge/thinq_lib/tree/master/docs/core-api)
