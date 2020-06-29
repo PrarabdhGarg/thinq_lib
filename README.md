@@ -13,10 +13,19 @@ The framework is created as an implementation of [the Idea](https://github.com/g
 ## Using the framework as a developer
 For a detailed explanation of all the functions and APIs exposed by the framework, please check out the documentation [here](https://github.com/gnowledge/thinq_lib/tree/master/docs/core-api)
 
+## Contributing to the framework
+To start contributing to the framework as a developer, refer the docs [here](https://github.com/PrarabdhGarg/thinq_lib/blob/master/docs/contributing.md)
+
 ## Future Plans
-- [ ] Expand the framework to take advantage of all the features of the IPFS framework
-- [ ] Support multiple layers and levels of encryption so that the developer can choose the appropriate one based on the requirements of the specific application being developed.
-- [ ] The method for storing user ratings is currently pretty insecure, and a better way using blockchain should be implemented
+- #### Version 0.1.0
+    * [ ] Get the filebook API of the framework working
+- #### Version 0.2.0
+    * [ ] Add an option to include meta-data and extra information with service requests
+    * [ ] Allow a single Service Provider to provide multiple services if they like
+- #### Other Plans
+    * [ ] Expand the framework to take advantage of all the features of the IPFS framework
+    * [ ] Support multiple layers and levels of encryption so that the developer can choose the appropriate one based on the requirements of the specific application being developed.
+    * [ ] The method for storing user ratings is currently pretty insecure, and a better way using blockchain should be implemented
 
 ## Examples
 To find examples on how to build applications using this framework, please refer to [this repository](https://github.com/gnowledge/ThinQ-Examples).
