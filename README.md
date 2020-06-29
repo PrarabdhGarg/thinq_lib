@@ -7,8 +7,11 @@ Currently, the framework offers the following features:
 - **Service Requests:** Service requests are pre-formatted text messages that are sent between users to perform specific tasks based on the requirements of the application developed using the framework. The difference between messages and requests is that requests need to be closed through a 3-way handshake mechanism to ensure that both parties have an equal say in the process.    
 - **Prioritization of Requests:** Service requests can be prioritized based on ratings given by other users, in order to ensure that all nodes present on the network have good incentives to remain fair.  
 
+## The Idea
+The framework is created as an implementation of [the Idea](https://github.com/gnowledge/thinq_lib/blob/master/docs/conceptNote.md)
+
 ## Using the framework as a developer
-For a detailed explanation of all the functions and APIs exposed by the framework, please check out the documentation [here](https://github.com/PrarabdhGarg/thinq_lib/tree/master/docs/core-api)
+For a detailed explanation of all the functions and APIs exposed by the framework, please check out the documentation [here](https://github.com/gnowledge/thinq_lib/tree/master/docs/core-api)
 
 ## Future Plans
 - [ ] Expand the framework to take advantage of all the features of the IPFS framework
@@ -16,4 +19,4 @@ For a detailed explanation of all the functions and APIs exposed by the framewor
 - [ ] The method for storing user ratings is currently pretty insecure, and a better way using blockchain should be implemented
 
 ## Examples
-To find examples on how to build applications using this framework, please refer to [this repository](https://github.com/RUnmesh/ThinQ-Examples).
+To find examples on how to build applications using this framework, please refer to [this repository](https://github.com/gnowledge/ThinQ-Examples).
