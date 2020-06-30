@@ -6,14 +6,14 @@ const cryptography = require('../util/cryptography')
 
 // Uploads a file parsed using FileReader to ipfs,adds it to filebook and returns the hash of newly uploaded file
 async function uploadfile(file,documentPath,filename,args){
-    info = await args.node.id() 
+    info = await args.node.id()
     let hash
     try {
-        await args.node.files.write(documentPath, Buffer.from(file), {create: true,parents: true})
+        await args.node.files.write(documentPath, file, {create: true,parents: true})
     } catch(e) {
         console.log('Error in adding file to IPFS system')
         console.log(e)
-    }   
+    }
     respon = await args.node.files.stat(documentPath)
     hash = respon.hash
     console.log('Hash of uploaded file is = ' + hash)
