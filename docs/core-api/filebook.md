@@ -4,7 +4,7 @@
     > Add a file to the IPFS file system so that it can be shared with other peers
 
     Parameters:
-    * file (Byte[]): The contents of file you want to upload to the filebook
+    * file (Buffer): The contents of file you want to upload to the filebook
     * documentPath (String): The location of where to store the document within the IPFS file system
     * fileName (String): The name with which the file should be saved
     * args (Object): The object retrned from the thinq.thinQ.init function
