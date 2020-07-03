@@ -15,9 +15,8 @@
   "bugs": {
     "url": "https://github.com/gnowledge/thinq_lib/issues"
   },
-   "publishConfig": { "registry": "https://npm.pkg.github.com/" }
-
-    "homepage": "https://github.com/gnowledge/thinq_lib#readme",
+  "publishConfig": { "registry": "https://npm.pkg.github.com/" },
+  "homepage": "https://github.com/gnowledge/thinq_lib#readme",
   "dependencies": {
     "ipfs": "^0.40.0",
     "ipfs-pubsub-room": "^1.4.1",
