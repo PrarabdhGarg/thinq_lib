@@ -18,7 +18,7 @@ To start contributing to the framework as a developer, refer the docs [here](htt
 
 ## Future Plans
 - #### Version 0.1.0
-    * [ ] Get the filebook API of the framework working
+    * [x] Get the filebook API of the framework working
 - #### Version 0.2.0
     * [ ] Add an option to include meta-data and extra information with service requests
     * [ ] Allow a single Service Provider to provide multiple services if they like
