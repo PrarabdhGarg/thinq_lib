@@ -57,4 +57,89 @@ describe("index.js", function() {
             await args.node.stop()
         })
     })
+
+    describe("register", function() {
+        beforeEach(async function() {
+            this.args = await thinQ.init()
+        })
+
+        afterEach(async function() {
+            await this.args.node.stop()
+        })
+
+        it('works with complete info object', async function() {
+            const result = await thinQ.register({
+                name: 'Test User 1',
+                bio: 'This is a test bio',
+                type: 1
+            }, this.args)
+            assert(result)
+        })
+
+        it('throws error with incomplete info object', async function() {
+            try {
+                const result = await thinQ.register({
+                    name: 'Test User 1',
+                    type: 1
+                }, this.args)
+            } catch(e) {
+                expect(e.message).to.equal('Unexpected input: undefined')
+            }
+        })
+
+        it('throws error with null args object', async function() {
+            try {
+                const result = await thinQ.register({
+                    name: 'Test User 1',
+                    bio: 'This is a test bio',
+                    type: 1
+                }, null)
+            } catch(e) {
+                expect(e.message).to.equal('Cannot read property \'node\' of null')
+            }
+        })
+    })
+
+    describe('addUser', function() {
+        beforeEach(async function() {
+            this.args = await thinQ.init()
+        })
+
+        afterEach(async function() {
+            await this.args.node.stop()
+        })
+
+        it('works with correct arguments', async function() {
+            const args2 = await thinQ.init({
+                path:'thinq/Path2'
+            })
+            const id = (await this.args.node.id()).id
+            const result = await thinQ.register({
+                name: 'Test User 1',
+                bio: 'This is a test bio',
+                type: 1
+            }, this.args)
+            var user_info = await thinQ.addUser(result, 'Test User 2', args2)
+            expect(user_info.name).to.equal('Test User 2')
+            await args2.node.stop()  
+        })
+    })
+
+    describe('getUsers', function() {
+        beforeEach(async function() {
+            this.args = await thinQ.init()
+        })
+
+        afterEach(async function() {
+            await this.args.node.stop()
+        })
+
+        it('returns correct list of users', async function() {
+            var list = await thinQ.getUsers(this.args)
+            assert(list)
+        })
+    })
+
+    // TODO: Add Tests for updateInfo
+    // TODO: Add Tests for getFileContent
 })
