@@ -21,7 +21,7 @@
   "homepage": "https://github.com/gnowledge/thinq_lib#readme",
   "dependencies": {
     "chai": "^4.2.0",
-    "ipfs": "^0.40.0",
+    "ipfs": "^0.65.0",
     "ipfs-pubsub-room": "^1.4.1",
     "md5": "^2.2.1",
     "mocha": "^8.0.1",
